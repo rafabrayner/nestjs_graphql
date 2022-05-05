@@ -1,0 +1,44 @@
+name: Continuos Integration Testing
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - development
+  pull_request:
+    types: 
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    branches: 
+      - main
+      - master
+      - development
+
+jobs:
+  test:
+    if: github.event.pull_request.draft == false
+    name: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cancel Previous Runs Actions
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 14.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Test
+        run: npm run test
